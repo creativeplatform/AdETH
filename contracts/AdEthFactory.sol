@@ -6,7 +6,7 @@ import "./ReentrancyGuard.sol";
 import "./Pausable.sol";
 import "./Dai.sol";
 
-contract AdEth is Ownable, ReentrancyGuard, Pausable {
+contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
   address public erc20Address;
 
   event ReceivedEther(address indexed sender, uint indexed amount);
