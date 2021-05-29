@@ -8,7 +8,7 @@ const erc20Address = config.web3.erc20Address;
 const AdEthFactoryAddress = config.web3.AdEthFactoryAddress;
 const adCallerAddresss = config.web3.adCallerAddresss;
 
-const CampaignForm = (props) => {
+const CampaignForm = () => {
   const [campaign, setCampaign] = useState({
     name: "",
     description: "",
@@ -16,6 +16,9 @@ const CampaignForm = (props) => {
     file: "uri",
     budget: 0,
     cpc: 0
+  })
+  const [NFTdata, setNFTData ] = useState({
+    NFTaddress: ""
   })
 
   const handleChange = (e) => {
@@ -39,12 +42,12 @@ const CampaignForm = (props) => {
     .send({ from: accounts[0] })
     .on('receipt', async () => {
       const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, AdEthFactoryAddress);
-      // createAdEthNFT(uint256 budget, address _newAdCaller, string memory _newUri, uint256 _newCpc)
       AdEthFactory.methods.createAdEthNFT(campaign.budget, adCallerAddresss, campaign.file, campaign.cpc)
       .send({ from: accounts[0] })
       .on('receipt', async (receipt) => {
         const data = receipt.events.FactoryProduction.returnValues;
-        console.log(data.AdEthNFT)
+        console.log(data)
+        setNFTData({NFTaddress: data.AdEthNFT})
       })
       .on('error', (err) => {
         console.log(err)
@@ -111,6 +114,15 @@ const CampaignForm = (props) => {
         />
       </label>
       <button className="introduction-button irrigateFormButton" onClick={() => createNFT()}>Generate NFT</button>
+      {NFTdata.NFTaddress !== "" ?
+      <div>
+        Your NFT address is : {NFTdata.NFTaddress}
+      </div>
+      :
+      <div>
+
+      </div>
+      }
     </div>
   )
 }
