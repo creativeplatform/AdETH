@@ -5,16 +5,12 @@ import AdEthFactoryContract from '../contracts/AdEthFactory.json';
 import AdEthNFTContract from '../contracts/AdEthNFT.json';
 import config from '../config/config';
 
-const erc20Address = config.web3.erc20Address;
-const adEthFactoryAddress = config.web3.adEthFactoryAddress;
-const adCallerAddress = config.web3.adCallerAddress;
 
 const CampaignForm = () => {
   const [campaign, setCampaign] = useState({
     name: "",
     description: "",
-    file: "https://i.picsum.photos/id/159/200/300.jpg?hmac=CC6862WSVsX6F74hcV30UzS4czPi0LO6zPJDaEaQeFU",
-    // file: "uri",
+    file: "",
     budget: 0,
     cpc: 0
   })
@@ -23,6 +19,9 @@ const CampaignForm = () => {
   })
   const [websiteAddress, setWebsiteAddress] = useState("")
   const [whitelisted, setWhitelisted] = useState(null);
+  const erc20Address = config.web3.erc20Address;
+  const adEthFactoryAddress = config.web3.adEthFactoryAddress;
+  const adCallerAddress = config.web3.adCallerAddress;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,12 +38,15 @@ const CampaignForm = () => {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const web3 = new Web3(window.ethereum);
     
+    const newAccount = web3.eth.accounts.create(web3.utils.randomHex(32));
+    console.log(newAccount.address, newAccount.privateKey)
+
     const erc20Instance = new web3.eth.Contract(erc20Contract.abi, erc20Address);
     erc20Instance.methods.approve(adEthFactoryAddress, campaign.budget)
     .send({ from: accounts[0] })
     .on('receipt', async () => {
       const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, adEthFactoryAddress);
-      AdEthFactory.methods.createAdEthNFT(campaign.budget, adCallerAddress, campaign.file, campaign.cpc)
+      AdEthFactory.methods.createAdEthNFT(campaign.budget, newAccount.address, campaign.file, campaign.cpc)
       .send({ from: accounts[0] })
       .on('receipt', async (receipt) => {
         const data = receipt.events.FactoryProduction.returnValues;
@@ -123,7 +125,7 @@ const CampaignForm = () => {
       </label>
       <label className="formLabel">File:
         <input 
-          type="file" 
+          type="text" 
           name="file" 
           id="file" 
           onChange={handleChange}

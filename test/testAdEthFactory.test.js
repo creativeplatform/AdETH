@@ -37,6 +37,8 @@ contract("AdEthFactory", (accounts) => {
 
   describe("test createAdEthNFT function", async () => {
     it("can create an AdEthNFT contract and keep the fee percentage", async () => {
+      const ethAmount = web3.utils.toWei("1", "ether");
+      await AdEthFactoryInstance.sendTransaction({ from: adEthFactoryOwner, value: ethAmount})
       const budget = 5000;
       const factoryFee = await AdEthFactoryInstance.fee.call();
       const initialFactoryBalance = await dai.balanceOf(AdEthFactoryInstance.address);

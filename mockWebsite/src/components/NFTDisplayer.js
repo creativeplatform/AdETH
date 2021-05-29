@@ -1,12 +1,11 @@
-// import React from 'react';
 import React, { useEffect } from 'react';
-// import Web3 from 'web3';
-// import AdEthNFTContract from '../contracts/AdEthNFT.json';
-// import config from '../config/config';
+import Web3 from 'web3';
+import AdEthNFTContract from '../contracts/AdEthNFT.json';
+import config from '../config/config';
 
-// const adCallerAddress = config.web3.adCallerAddress;
-// const adEthNFTAddress = config.web3.adEthNFTAddress;
-// const websiteAddress = config.web3.websiteAddress;
+const adEthNFTAddress = config.web3.adEthNFTAddress;
+const websiteAddress = config.web3.websiteAddress;
+const adCallerAddress = config.web3.adCallerAddress;
 
 const NFTDisplayer = (props) => {
   useEffect(() => {
@@ -15,19 +14,23 @@ const NFTDisplayer = (props) => {
 
   const nftClicked = async () => {
     console.log("clicked");
-  //   const web3 = new Web3(window.ethereum);
-  //   const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, props.adEthNFTAddress);
-  //   const uri = await AdEthNFTInstance.methods.uri().call();
-  //   console.log(uri)
-  //   AdEthNFTInstance.methods.beenClicked(websiteAddress)
-  //   .send({ from: adCallerAddress })
-  //   .on('receipt', (receipt) => {
-  //     const data = receipt.events.Clicked.returnValues;
-  //     console.log(data)
-  //   })  
-  //   .on('error', (err) => {
-  //     console.log(err)
-  //   })
+    const web3 = new Web3(window.ethereum);
+    const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, adEthNFTAddress);
+    const uri = await AdEthNFTInstance.methods.uri().call();
+    console.log(uri)
+    console.log(adEthNFTAddress)
+    console.log(websiteAddress)
+    console.log(adCallerAddress)
+    AdEthNFTInstance.methods.beenClicked(websiteAddress).send({ from: adCallerAddress })
+    // AdEthNFTInstance.methods.beenClicked(websiteAddress)
+    // .send({ from: adCallerAddress })
+    // .on('receipt', (receipt) => {
+    //   const data = receipt.events.Clicked.returnValues;
+    //   console.log(data)
+    // })  
+    // .on('error', (err) => {
+    //   console.log(err)
+    // })
   };
 
   return (

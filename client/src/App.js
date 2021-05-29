@@ -11,9 +11,7 @@ class App extends Component {
   componentDidMount = async () => {
     try {
       const web3 = await getWeb3();
-
       const accounts = await web3.eth.getAccounts();
-
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = AdEthFactoryContract.networks[networkId];
       const instance = new web3.eth.Contract(
@@ -31,11 +29,7 @@ class App extends Component {
   };
 
   runExample = async () => {
-    // const { accounts, contract } = this.state;
     const { contract } = this.state;
-
-    // await contract.methods.setFee(10).send({ from: accounts[0] });
-
     const currentFee = await contract.methods.fee().call();
     this.setState({ feeValue: currentFee });
   };
