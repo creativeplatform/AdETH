@@ -21,21 +21,15 @@ contract("AdEthFactory", (accounts) => {
     });
   });
 
-  // describe("test whitelisting function", async () => {
-  //   it("can whitelist an address", async () => {
-  //     await AdEthNFTInstance.whitelistAddress(website1, { from: newOwner });
-   
-  //     const isWhitelisted = await AdEthNFTInstance.whitelist.call(website1);
-  //     assert.equal(isWhitelisted, true, "The website1 should be whitelisted");
-  //   });
-    
-  //   it("can blacklist an address", async () => {
-  //     await AdEthNFTInstance.blacklistAddress(website1, { from: newOwner });
-   
-  //     const isWhitelisted = await AdEthNFTInstance.whitelist.call(website1);
-  //     assert.equal(isWhitelisted, false, "The website1 should be blacklisted");
-  //   });
-  // });
+  describe("set new fee", async () => {
+    it("can set a new fee value", async () => {
+      const initialFee = await AdEthFactoryInstance.fee.call();
+      await AdEthFactoryInstance.setFee(1500, { from: adEthFactoryOwner });
+      const newFee = await AdEthFactoryInstance.fee.call();
+
+      assert.equal(parseInt(newFee), (parseInt(initialFee) + (parseInt(newFee) - parseInt(initialFee))), "The new fee should be set");
+    })
+  })
 
   // describe("test click function", async () => {
   //   it("transfers cpc amount of erc20 to website address ", async () => {

@@ -42,8 +42,6 @@ contract("AdEthNFT", (accounts) => {
       await AdEthNFTInstance.whitelistAddress(website1, { from: newOwner });
       await dai.mint(AdEthNFTInstance.address, 1000, { from: adEthFactoryAddress });
       const initialWebsite1Balance = await dai.balanceOf(website1);
-      const initialNFTBalance = await dai.balanceOf(AdEthNFTInstance.address);
-      console.log("NFTBalance", parseInt(initialNFTBalance));
 
       await AdEthNFTInstance.beenClicked(website1, { from: adCaller });
       

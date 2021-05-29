@@ -9,11 +9,12 @@ import "./AdEthNFT.sol";
 
 contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
   address public erc20Address;
-  address[] AdEthNFTs;
-  uint fee;
+  address[] public AdEthNFTs;
+  uint public fee;
 
   event ReceivedEther(address indexed sender, uint indexed amount);
   event FactoryProduction(address indexed customer, address indexed AdEthNFT, uint budget);
+  event NewFeeSet(uint indexed _newFee);
   
   constructor(address _erc20Address, uint _fee) {
     erc20Address = _erc20Address;
@@ -36,6 +37,11 @@ contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
     _unpause();
   }
 
+  function setFee(uint _newFee) public onlyOwner {
+    fee = _newFee;
+    emit NewFeeSet(_newFee);
+  }
+
   function createAdEthNFT(uint budget, address _newAdCaller, string memory _newUri, uint256 _newCpc, address _tokenAddress) public {
     Dai tokenContract = Dai(erc20Address);
     require(tokenContract.balanceOf(msg.sender) >= budget, "Insufficient erc20 balance");
@@ -44,7 +50,8 @@ contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
 
     AdEthNFT newAdEthNFT = new AdEthNFT(msg.sender, _newAdCaller, _newUri, _newCpc, _tokenAddress);
     AdEthNFTs.push(address(newAdEthNFT));
-    require(tokenContract.transferFrom(address(this), address(newAdEthNFT), budget));
+    uint budgetMinusFee = budget - fee;
+    require(tokenContract.transferFrom(address(this), address(newAdEthNFT), budgetMinusFee));
     
     emit FactoryProduction(msg.sender, address(newAdEthNFT), budget);
   }
