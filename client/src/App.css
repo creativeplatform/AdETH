@@ -20,3 +20,16 @@
 .App-link {
   color: #09d3ac;
 }
+
+.campaignFormContainer {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+}
+
+.formLabel{
+  margin: 10px;
+  text-align: left;
+  display: grid;
+}

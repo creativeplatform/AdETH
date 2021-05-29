@@ -66,7 +66,9 @@ class App extends Component {
         </p>
         <div>Current AdEth fee value is {this.state.feeValue} %</div>
 
-        <CampaignForm></CampaignForm>
+        <CampaignForm
+          web3 = { this.state.web3 }
+        ></CampaignForm>
       </div>
     );
   }
