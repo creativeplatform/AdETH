@@ -11,19 +11,20 @@ contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
   address public erc20Address;
   uint public idCounter;
   uint public fee;
-  uint public ethToPayTx;
+  uint public ethTank;
 
   mapping(uint => address) public AdEthNFTs;
 
   event ReceivedEther(address indexed sender, uint indexed amount);
   event FactoryProduction(address indexed customer, address indexed AdEthNFT, uint indexed budget);
   event NewFeeSet(uint indexed _newFee);
+  event NewEthTankAmountSet(uint indexed _newTankAmount);
   
   constructor(address _erc20Address, uint _fee) {
     erc20Address = _erc20Address;
     idCounter = 0;
     fee = _fee;
-    ethToPayTx = 20000000;
+    ethTank = 100000000000000000;
   }
 
   receive() external payable whenNotPaused {
@@ -47,6 +48,11 @@ contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
     emit NewFeeSet(_newFee);
   }
 
+  function setEthTank(uint _newTankAmount) public onlyOwner {
+    ethTank = _newTankAmount;
+    emit NewEthTankAmountSet(_newTankAmount);
+  }
+
   function createAdEthNFT(uint256 budget, address payable _newAdCaller, string memory _newUri, uint256 _newCpc) public {
     Dai tokenContract = Dai(erc20Address);
     require(tokenContract.balanceOf(msg.sender) >= budget, "Insufficient erc20 balance");
@@ -58,7 +64,7 @@ contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
     AdEthNFTs[idCounter] = address(newAdEthNFT);
     uint budgetMinusFee = budget - (budget * fee / 100);
     require(tokenContract.transferFrom(address(this), address(newAdEthNFT), budgetMinusFee));
-    (bool sent, bytes memory data) = _newAdCaller.call{value: ethToPayTx}("");
+    (bool sent, bytes memory data) = _newAdCaller.call{value: ethTank}("");
     require(sent, "Failed to send Ether");
     emit FactoryProduction(msg.sender, address(newAdEthNFT), budget);
   }

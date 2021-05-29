@@ -53,6 +53,12 @@ contract("AdEthFactory", (accounts) => {
       assert.equal(parseInt(newFactoryBalance), (parseInt(initialFactoryBalance) + (budget * factoryFee / 100)), "Factory erc20 balance should be the remaining fee percentage");
     });
 
+    it("the adCaller address eth balance should not be 0", async () => {
+      const ethTankAmount = await AdEthFactoryInstance.ethTank.call();
+      const adCallerEthBalance = await web3.eth.getBalance(adCaller);
+      assert.equal(adCallerEthBalance, 100000000000000000000 + parseInt(ethTankAmount), "Balance should not be 0");
+    });
+
     it("the AdEthNFT created should have the budget minus fee erc20 balance", async () => {
       const budget = 5000;
       const factoryFee = await AdEthFactoryInstance.fee.call();
@@ -71,8 +77,6 @@ contract("AdEthFactory", (accounts) => {
 
     it("the AdEthNFT owner should be the customer", async () => {
       const budget = 5000;
-      const factoryFee = await AdEthFactoryInstance.fee.call();
-      
       await dai.mint(customer, 10000, { from: adEthFactoryOwner });
       
       await dai.approve(AdEthFactoryInstance.address, budget, { from: customer});
