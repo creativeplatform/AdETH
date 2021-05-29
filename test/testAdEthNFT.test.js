@@ -3,7 +3,7 @@ const AdEthNFT = artifacts.require("AdEthNFT");
 contract("AdEthNFT", (accounts) => {
   let dai;
   let AdEthNFTInstance;
-  let [adEthFactoryAddress, newOwner, caller, visitor] = accounts;
+  let [adEthFactoryAddress, newOwner, website1, website2, caller, visitor] = accounts;
 
   before(async () => {
     AdEthNFTInstance = await AdEthNFT.deployed(newOwner, caller, "uri", 10);
@@ -16,16 +16,19 @@ contract("AdEthNFT", (accounts) => {
     });
   });
 
-  // describe("transfer ownership", async () => {
-  //   it("can transfer the ownership of the contract", async () => {
-  //     await irrigate.transferOwnership(newOwner, { from: originalOwner });
+  describe("test whitelisting function", async () => {
+    it("can whitelist an address", async () => {
+      await AdEthNFTInstance.whitelistAddress(website1, { from: newOwner });
    
-  //     const owner = await irrigate.owner();
-  //     assert.equal(owner, newOwner, "The owner should be equal to newOwner");
-  //   });
+      const isWhitelisted = await AdEthNFTInstance.whitelist.call(website1);
+      assert.equal(isWhitelisted, true, "The website1 should be whitelisted");
+    });
     
-  //   it("should reverts transferOwnership when sender is not authorized", async () => {
-  //     await expectRevert(irrigate.transferOwnership(originalOwner, { from: originalOwner }), "Ownable: caller is not the owner");
-  //   });
-  // });
+    it("can blacklist an address", async () => {
+      await AdEthNFTInstance.blacklistAddress(website1, { from: newOwner });
+   
+      const isWhitelisted = await AdEthNFTInstance.whitelist.call(website1);
+      assert.equal(isWhitelisted, false, "The website1 should be blacklisted");
+    });
+  });
 });
