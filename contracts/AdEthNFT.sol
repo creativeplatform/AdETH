@@ -8,16 +8,16 @@ contract AdEthNFT {
   address public factory;
   address public adCaller;
   string public uri;
-  uint8 public cpc;
+  uint256 public cpc;
   address public tokenAddress;
   
   mapping(address => bool) public whitelist;
   
   event Whitelisted(address newAddress);
   event Blacklisted(address newAddress);
-  event Clicked(address websiteAddress, uint8 cpc);
+  event Clicked(address websiteAddress, uint256 cpc);
 
-  constructor(address _newOwner, address _newAdCaller, string memory _newUri, uint8 _newCpc, address _tokenAddress) {
+  constructor(address _newOwner, address _newAdCaller, string memory _newUri, uint256 _newCpc, address _tokenAddress) {
     factory = msg.sender;
     owner = _newOwner;
     adCaller = _newAdCaller;
@@ -56,7 +56,7 @@ contract AdEthNFT {
 
   function beenClicked(address websiteAddress) public onlyAdCaller {
     require(whitelist[websiteAddress] == true, "Website address not whitelisted");
-    
+
     Dai tokenContract = Dai(tokenAddress);
     require(tokenContract.balanceOf(address(this)) >= cpc, "Insufficient erc20 balance");
     require(tokenContract.transferFrom(address(this), websiteAddress, cpc) == true, "Could not send tokens to the website");

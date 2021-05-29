@@ -5,12 +5,12 @@ contract("AdEthNFT", (accounts) => {
   let chainId;
   let dai;
   let AdEthNFTInstance;
-  let [adEthFactoryAddress, newOwner, website1, website2, caller, visitor] = accounts;
+  let [adEthFactoryAddress, newOwner, adCaller, website1, website2, visitor] = accounts;
+  let cpc = 10;
 
   before(async () => {
     chainId = await web3.eth.getChainId();
     dai = await Dai.deployed(chainId);
-    // AdEthNFTInstance = await AdEthNFT.deployed(newOwner, caller, "uri", 10);
     AdEthNFTInstance = await AdEthNFT.deployed();
   });
 
@@ -34,6 +34,21 @@ contract("AdEthNFT", (accounts) => {
    
       const isWhitelisted = await AdEthNFTInstance.whitelist.call(website1);
       assert.equal(isWhitelisted, false, "The website1 should be blacklisted");
+    });
+  });
+
+  describe("test click function", async () => {
+    it("transfers cpc amount of erc20 to website address ", async () => {
+      await AdEthNFTInstance.whitelistAddress(website1, { from: newOwner });
+      await dai.mint(AdEthNFTInstance.address, 1000, { from: adEthFactoryAddress });
+      const initialWebsite1Balance = await dai.balanceOf(website1);
+      const initialNFTBalance = await dai.balanceOf(AdEthNFTInstance.address);
+      console.log("NFTBalance", parseInt(initialNFTBalance));
+
+      await AdEthNFTInstance.beenClicked(website1, { from: adCaller });
+      
+      const finalWebsite1Balance = await dai.balanceOf(website1)
+      assert.equal(parseInt(finalWebsite1Balance), (parseInt(initialWebsite1Balance) + cpc), "The website1 erc20 balance should be added by one cpc");
     });
   });
 });
