@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AdEthFactoryContract from "./contracts/AdEthFactory.json";
 import getWeb3 from "./getWeb3";
 import CampaignForm from  "./components/campaignForm";
-import About from "./pages/About";
+import Trendy from "./pages/Trendy";
 
 import "./App.css";
 
@@ -67,7 +67,7 @@ class App extends Component {
                 </div>
               )
             }} />
-            <Route path="/trendy" exact component={() => <About />} />
+            <Route path="/trendy" exact component={() => <Trendy />} />
           </Switch>
         </Router>
       </div>
