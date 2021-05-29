@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AdEthFactoryContract from "./contracts/AdEthFactory.json";
 import getWeb3 from "./getWeb3";
 import CampaignForm from  "./components/campaignForm";
+import About from "./pages/About";
 
 import "./App.css";
 
@@ -46,18 +48,28 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>AdEth</h1>
-        <h2>Onboarding the advertising industrie into web3</h2>
-        <p>
-          Create an NFT with your add and provide a budget.
-          Websites gets paid automatically on each clic.
-        </p>
-        <p>
-          Transactions are made in DAI only.
-        </p>
-        <div>Current AdEth fee value is {this.state.feeValue} %</div>
-
-        <CampaignForm></CampaignForm>
+        <Router>
+          <Switch>
+            <Route path="/" exact component={() => {
+              return (
+                <div>
+                  <h1>AdEth</h1>
+                  <h2>Onboarding the advertising industrie into web3</h2>
+                  <p>
+                    Create an NFT with your add and provide a budget.
+                    Websites gets paid automatically on each clic.
+                  </p>
+                  <p>
+                    Transactions are made in DAI only.
+                  </p>
+                  <div>Current AdEth fee value is {this.state.feeValue} %</div>
+                  <CampaignForm></CampaignForm>
+                </div>
+              )
+            }} />
+            <Route path="/trendy" exact component={() => <About />} />
+          </Switch>
+        </Router>
       </div>
     );
   }
