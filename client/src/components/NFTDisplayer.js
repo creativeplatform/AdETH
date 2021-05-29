@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import Web3 from 'web3';
-// import erc20Contract from '../contracts/Dai.json';
-// import AdEthFactoryContract from '../contracts/AdEthFactory.json';
 import AdEthNFTContract from '../contracts/AdEthNFT.json';
 import config from '../config/config';
 
-// const erc20Address = config.web3.erc20Address;
-// const AdEthFactoryAddress = config.web3.AdEthFactoryAddress;
 const adCallerAddresss = config.web3.adCallerAddresss;
 
 const NFTDisplayer = () => {
@@ -24,9 +20,9 @@ const NFTDisplayer = () => {
 
   return (
     <div className="NFTDisplayerContainer">
-      <div onClick={() => nftClicked()}>
+      <a onClick={() => nftClicked()} href="https://sailing-with-greenpeace.com/" target="_blank">
         <img src={nft.imgSrc} alt="display image" />
-      </div>
+      </a>
     </div>
   )
 }
