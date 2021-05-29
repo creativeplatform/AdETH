@@ -1,5 +1,8 @@
 import React from "react";
+import config from '../config/config';
 import NFTDisplayer from "../components/NFTDisplayer";
+
+const adEthNFTAddress = config.web3.adEthNFTAddress;
 
 function Trendy() {
   return (
@@ -11,7 +14,7 @@ function Trendy() {
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Si quae forte-possumus. Duo Reges: constructio interrete. Non igitur potestis voluptate omnia dirigentes aut tueri aut retinere virtutem. Teneo, inquit, finem illi videri nihil dolere. Quem Tiberina descensio festo illo die tanto gaudio affecit, quanto L. Cum sciret confestim esse moriendum eamque mortem ardentiore studio peteret, quam Epicurus voluptatem petendam putat. </p>
             <p>Sed in rebus apertissimis nimium longi sumus. Hic quoque suus est de summoque bono dissentiens dici vere Peripateticus non potest. Restincta enim sitis stabilitatem voluptatis habet, inquit, illa autem voluptas ipsius restinctionis in motu est. Ut nemo dubitet, eorum omnia officia quo spectare, quid sequi, quid fugere debeant? Multoque hoc melius nos veriusque quam Stoici. Qui non moveatur et offensione turpitudinis et comprobatione honestatis? Levatio igitur vitiorum magna fit in iis, qui habent ad virtutem progressionis aliquantum. Atqui, inquit, si Stoicis concedis ut virtus sola, si adsit vitam efficiat beatam, concedis etiam Peripateticis. </p>
           </div>
-          <NFTDisplayer />
+          <NFTDisplayer adEthNFTAddress={adEthNFTAddress}/>
           <div className="trendyParagraph">
             <h2>Quae quidem sapientes sequuntur duce natura tamquam videntes;</h2>
             <p>Ita similis erit ei finis boni, atque antea fuerat, neque idem tamen; Sed quid ages tandem, si utilitas ab amicitia, ut fit saepe, defecerit? Nihil enim iam habes, quod ad corpus referas; Quem Tiberina descensio festo illo die tanto gaudio affecit, quanto L. Quae si potest singula consolando levare, universa quo modo sustinebit? Nec vero hoc oratione solum, sed multo magis vita et factis et moribus comprobavit. </p>

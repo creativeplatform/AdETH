@@ -13,8 +13,8 @@ const CampaignForm = () => {
   const [campaign, setCampaign] = useState({
     name: "",
     description: "",
-    // file: "https://i.picsum.photos/id/159/200/300.jpg?hmac=CC6862WSVsX6F74hcV30UzS4czPi0LO6zPJDaEaQeFU",
-    file: "uri",
+    file: "https://i.picsum.photos/id/159/200/300.jpg?hmac=CC6862WSVsX6F74hcV30UzS4czPi0LO6zPJDaEaQeFU",
+    // file: "uri",
     budget: 0,
     cpc: 0
   })

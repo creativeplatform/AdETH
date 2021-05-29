@@ -5,8 +5,6 @@ const WEB3 = {
   adCallerAddress: "0xdc2cf8Ae404b722312ff47D4B684fd8A7dC835EB",
   adEthNFTAddress: "0xD4b8fE496fCDe2D5f04d4fBa3c7bedca1fbe86Cf",
 	websiteAddress: "0x7F4AE0e9B7275C41B8B4160B746AA934c58bCFe0",
-	// networkId: 137 //Matic
-	// networkId: 5777, //Ganache 7545
 };
 
 const config = {
