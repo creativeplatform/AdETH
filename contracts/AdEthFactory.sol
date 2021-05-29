@@ -9,16 +9,19 @@ import "./AdEthNFT.sol";
 
 contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
   address public erc20Address;
-  address[] public AdEthNFTs;
+  uint public idCounter;
   uint public fee;
 
+  mapping(uint => address) public AdEthNFTs;
+
   event ReceivedEther(address indexed sender, uint indexed amount);
-  event FactoryProduction(address indexed customer, address indexed AdEthNFT, uint budget);
+  event FactoryProduction(address indexed customer, address indexed AdEthNFT, uint indexed budget);
   event NewFeeSet(uint indexed _newFee);
   
   constructor(address _erc20Address, uint _fee) {
     erc20Address = _erc20Address;
     fee = _fee;
+    idCounter = 0;
   }
 
   receive() external payable whenNotPaused {
@@ -46,18 +49,18 @@ contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
 
   }
 
-  function createAdEthNFT(uint256 budget, address _newAdCaller, string memory _newUri, uint256 _newCpc) public returns (address) {
+  function createAdEthNFT(uint256 budget, address _newAdCaller, string memory _newUri, uint256 _newCpc) public {
     Dai tokenContract = Dai(erc20Address);
     require(tokenContract.balanceOf(msg.sender) >= budget, "Insufficient erc20 balance");
     require(tokenContract.allowance(msg.sender, address(this)) >= budget, "Insufficient erc20 allowance");
     require(tokenContract.transferFrom(msg.sender, address(this), budget) == true, "Could not get tokens from customer");
 
     AdEthNFT newAdEthNFT = new AdEthNFT(msg.sender, _newAdCaller, _newUri, _newCpc, erc20Address);
-    AdEthNFTs.push(address(newAdEthNFT));
-    uint budgetMinusFee = budget - fee;
+    idCounter += 1;
+    AdEthNFTs[idCounter] = address(newAdEthNFT);
+    uint budgetMinusFee = budget - (budget * fee / 100);
     require(tokenContract.transferFrom(address(this), address(newAdEthNFT), budgetMinusFee));
-    
+
     emit FactoryProduction(msg.sender, address(newAdEthNFT), budget);
-    return address(newAdEthNFT);
   }
 }

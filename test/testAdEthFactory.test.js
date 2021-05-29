@@ -23,50 +23,49 @@ contract("AdEthFactory", (accounts) => {
 
   describe("set new fee", async () => {
     it("can set a new fee value", async () => {
+      const newFee = 10;
       const initialFee = await AdEthFactoryInstance.fee.call();
-      await AdEthFactoryInstance.setFee(1500, { from: adEthFactoryOwner });
-      const newFee = await AdEthFactoryInstance.fee.call();
+      await AdEthFactoryInstance.setFee(newFee, { from: adEthFactoryOwner });
+      const contractFee = await AdEthFactoryInstance.fee.call();
 
-      assert.equal(parseInt(newFee), (parseInt(initialFee) + (parseInt(newFee) - parseInt(initialFee))), "The new fee should be set");
+      assert.equal(parseInt(newFee), parseInt(contractFee), "The new fee should be set");
     });
   });
 
   describe("test createAdEthNFT function", async () => {
-    // createAdEthNFT(uint budget, address _newAdCaller, string memory _newUri, uint256 _newCpc)
-    it("can create an AdEthNFT contract", async () => {
-      // mint dai to customer
-      await dai.mint(customer, 10000, { from: adEthFactoryOwner });
-      const initialCustomerBalance = await dai.balanceOf(customer);
-      console.log("initialCustomerBalance", parseInt(initialCustomerBalance));
-      // approve factory
-      await dai.approve(AdEthFactoryInstance.address, 5000, { from: customer});
-      const customerAllowance = await dai.allowance.call(customer, AdEthFactoryInstance.address);
-      console.log("customerAllowance", parseInt(customerAllowance));
-      // call function
-      await AdEthFactoryInstance.createAdEthNFT(5000, adCaller, "uri", 10, { from: customer });
-
-      const customerBalance = await dai.balanceOf(customer);
-      console.log("customerBalance", parseInt(customerBalance));
-
-      const factoryBalance = await dai.balanceOf(AdEthFactoryInstance.address);
-      console.log("factoryBalance", parseInt(factoryBalance));
-
+    it("can create an AdEthNFT contract and keep the fee percentage", async () => {
+      const budget = 5000;
+      const factoryFee = await AdEthFactoryInstance.fee.call();
+      const initialFactoryBalance = await dai.balanceOf(AdEthFactoryInstance.address);
       
+      await dai.mint(customer, budget * 2, { from: adEthFactoryOwner });
+      
+      await dai.approve(AdEthFactoryInstance.address, budget, { from: customer});
+      
+      await AdEthFactoryInstance.createAdEthNFT(budget, adCaller, "uri", 10, { from: customer });
+
+      const newFactoryBalance = await dai.balanceOf(AdEthFactoryInstance.address);
+      assert.equal(parseInt(newFactoryBalance), (parseInt(initialFactoryBalance) + (budget * factoryFee / 100)), "Factory erc20 balance should be the remaining fee percentage");
+
     })
   })
 
-  // describe("test click function", async () => {
-  //   it("transfers cpc amount of erc20 to website address ", async () => {
-  //     await AdEthNFTInstance.whitelistAddress(website1, { from: newOwner });
-  //     await dai.mint(AdEthNFTInstance.address, 1000, { from: adEthFactoryAddress });
-  //     const initialWebsite1Balance = await dai.balanceOf(website1);
-  //     const initialNFTBalance = await dai.balanceOf(AdEthNFTInstance.address);
-  //     console.log("NFTBalance", parseInt(initialNFTBalance));
-
-  //     await AdEthNFTInstance.beenClicked(website1, { from: adCaller });
+  describe("test createAdEthNFT function", async () => {
+    // createAdEthNFT(uint budget, address _newAdCaller, string memory _newUri, uint256 _newCpc)
+    it("the AdEthNFT created should have the budget minus fee erc20 balance", async () => {
+      const budget = 5000;
+      const factoryFee = await AdEthFactoryInstance.fee.call();
       
-  //     const finalWebsite1Balance = await dai.balanceOf(website1)
-  //     assert.equal(parseInt(finalWebsite1Balance), (parseInt(initialWebsite1Balance) + cpc), "The website1 erc20 balance should be added by one cpc");
-  //   });
-  // });
+      await dai.mint(customer, 10000, { from: adEthFactoryOwner });
+      
+      await dai.approve(AdEthFactoryInstance.address, budget, { from: customer});
+      
+      await AdEthFactoryInstance.createAdEthNFT(budget, adCaller, "uri", 10, { from: customer });
+
+      const lastId = await AdEthFactoryInstance.idCounter.call();
+      const adEthNFTAddress = await AdEthFactoryInstance.AdEthNFTs.call(lastId);
+      const adEthNFTBalance = await dai.balanceOf(adEthNFTAddress);
+      assert.equal(parseInt(adEthNFTBalance), (budget - (budget * factoryFee / 100)), "The adEthNFT balance should be equal to the budget minus the fee percentage");
+    })
+  })
 });
