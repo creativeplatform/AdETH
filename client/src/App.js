@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import AdEthFactoryContract from "./contracts/AdEthFactory.json";
 import getWeb3 from "./getWeb3";
+import CampaignForm from  "./components/campaignForm";
 
 import "./App.css";
 
@@ -54,17 +55,18 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
+        <h1>AdEth</h1>
+        <h2>Onboarding the advertising industrie into web3</h2>
         <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
+          Create an NFT with your add and provide a budget.
+          Websites gets paid automatically on each clic.
         </p>
         <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
+          Transactions are made in DAI only.
         </p>
-        <div>The fee value is: {this.state.feeValue}</div>
+        <div>Current AdEth fee value is {this.state.feeValue} %</div>
+
+        <CampaignForm></CampaignForm>
       </div>
     );
   }
