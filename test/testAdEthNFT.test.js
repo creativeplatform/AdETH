@@ -7,15 +7,14 @@ contract("AdEthNFT", (accounts) => {
 
   before(async () => {
     AdEthNFTInstance = await AdEthNFT.deployed(newOwner, caller, "uri", 10);
-    // AdEthNFTInstance = await AdEthNFT.deployed();
   });
 
-  // describe("get owner", async () => {
-  //   it("can fetch the owner of the contract", async () => {
-  //     const currentOwner = await AdEthNFTInstance.owner.call();
-  //     assert.equal(currentOwner, newOwner, "Current owner should be equal to the new owner");
-  //   });
-  // });
+  describe("get owner", async () => {
+    it("can fetch the owner of the contract", async () => {
+      const currentOwner = await AdEthNFTInstance.owner.call();
+      assert.equal(currentOwner, newOwner, "Current owner should be equal to the new owner");
+    });
+  });
 
   // describe("transfer ownership", async () => {
   //   it("can transfer the ownership of the contract", async () => {
