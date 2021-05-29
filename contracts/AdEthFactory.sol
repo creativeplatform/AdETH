@@ -45,10 +45,6 @@ contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
     emit NewFeeSet(_newFee);
   }
 
-  function deposit(uint budget) public {
-
-  }
-
   function createAdEthNFT(uint256 budget, address _newAdCaller, string memory _newUri, uint256 _newCpc) public {
     Dai tokenContract = Dai(erc20Address);
     require(tokenContract.balanceOf(msg.sender) >= budget, "Insufficient erc20 balance");
