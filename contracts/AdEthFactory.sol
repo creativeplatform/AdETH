@@ -42,17 +42,22 @@ contract AdEthFactory is Ownable, ReentrancyGuard, Pausable {
     emit NewFeeSet(_newFee);
   }
 
-  function createAdEthNFT(uint budget, address _newAdCaller, string memory _newUri, uint256 _newCpc, address _tokenAddress) public {
+  function deposit(uint budget) public {
+
+  }
+
+  function createAdEthNFT(uint256 budget, address _newAdCaller, string memory _newUri, uint256 _newCpc) public returns (address) {
     Dai tokenContract = Dai(erc20Address);
     require(tokenContract.balanceOf(msg.sender) >= budget, "Insufficient erc20 balance");
     require(tokenContract.allowance(msg.sender, address(this)) >= budget, "Insufficient erc20 allowance");
     require(tokenContract.transferFrom(msg.sender, address(this), budget) == true, "Could not get tokens from customer");
 
-    AdEthNFT newAdEthNFT = new AdEthNFT(msg.sender, _newAdCaller, _newUri, _newCpc, _tokenAddress);
+    AdEthNFT newAdEthNFT = new AdEthNFT(msg.sender, _newAdCaller, _newUri, _newCpc, erc20Address);
     AdEthNFTs.push(address(newAdEthNFT));
     uint budgetMinusFee = budget - fee;
     require(tokenContract.transferFrom(address(this), address(newAdEthNFT), budgetMinusFee));
     
     emit FactoryProduction(msg.sender, address(newAdEthNFT), budget);
+    return address(newAdEthNFT);
   }
 }
