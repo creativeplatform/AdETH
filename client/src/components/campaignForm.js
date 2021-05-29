@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import Web3 from 'web3';
 import erc20Contract from '../contracts/Dai.json';
 import AdEthFactoryContract from '../contracts/AdEthFactory.json';
+import AdEthNFTContract from '../contracts/AdEthNFT.json';
 import config from '../config/config';
 
 const erc20Address = config.web3.erc20Address;
-const AdEthFactoryAddress = config.web3.AdEthFactoryAddress;
-const adCallerAddresss = config.web3.adCallerAddresss;
+const adEthFactoryAddress = config.web3.adEthFactoryAddress;
+const adCallerAddress = config.web3.adCallerAddress;
 
 const CampaignForm = () => {
   const [campaign, setCampaign] = useState({
@@ -20,6 +21,8 @@ const CampaignForm = () => {
   const [NFTdata, setNFTData ] = useState({
     NFTaddress: ""
   })
+  const [websiteAddress, setWebsiteAddress] = useState("")
+  const [whitelisted, setWhitelisted] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,7 +30,6 @@ const CampaignForm = () => {
       ...prevCampaign,
       [name]: value,
     }));
-    console.log(campaign)
   };
 
   const createNFT = async () => {
@@ -38,11 +40,11 @@ const CampaignForm = () => {
     const web3 = new Web3(window.ethereum);
     
     const erc20Instance = new web3.eth.Contract(erc20Contract.abi, erc20Address);
-    erc20Instance.methods.approve(AdEthFactoryAddress, campaign.budget)
+    erc20Instance.methods.approve(adEthFactoryAddress, campaign.budget)
     .send({ from: accounts[0] })
     .on('receipt', async () => {
-      const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, AdEthFactoryAddress);
-      AdEthFactory.methods.createAdEthNFT(campaign.budget, adCallerAddresss, campaign.file, campaign.cpc)
+      const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, adEthFactoryAddress);
+      AdEthFactory.methods.createAdEthNFT(campaign.budget, adCallerAddress, campaign.file, campaign.cpc)
       .send({ from: accounts[0] })
       .on('receipt', async (receipt) => {
         const data = receipt.events.FactoryProduction.returnValues;
@@ -58,7 +60,45 @@ const CampaignForm = () => {
     })  
   }
 
+  const handleWebsiteAddress = (e) => {
+    const { value } = e.target;
+    setWebsiteAddress(value);
+  };
 
+  const whitelist = async () => {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const web3 = new Web3(window.ethereum);
+    
+    const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, NFTdata.NFTaddress);
+    AdEthNFTInstance.methods.whitelistAddress(websiteAddress)
+    .send({ from: accounts[0] })
+    .on('receipt', async () => {
+      console.log("success")
+      setWhitelisted(true)
+    })
+  }
+
+  const blacklist = async () => {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const web3 = new Web3(window.ethereum);
+    
+    const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, NFTdata.NFTaddress);
+    AdEthNFTInstance.methods.blacklistAddress(websiteAddress)
+    .send({ from: accounts[0] })
+    .on('receipt', async () => {
+      console.log("success")
+      setWhitelisted(false)
+    })
+  }
+
+  const isWhitelisted = async () => {
+    const web3 = new Web3(window.ethereum);
+    
+    const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, NFTdata.NFTaddress);
+    const status = await AdEthNFTInstance.methods.whitelist(websiteAddress).call()
+    console.log(status)
+    setWhitelisted(status);
+  }
 
   return (
     <div className="campaignFormContainer">
@@ -69,7 +109,6 @@ const CampaignForm = () => {
           name="name" 
           id="name" 
           onChange={handleChange}
-          // value={newDonation.amount}
           required
         />
       </label>
@@ -79,7 +118,6 @@ const CampaignForm = () => {
           name="description" 
           id="description" 
           onChange={handleChange}
-          // value={newDonation.amount}
           required
         />
       </label>
@@ -89,7 +127,6 @@ const CampaignForm = () => {
           name="file" 
           id="file" 
           onChange={handleChange}
-          // value={newDonation.amount}
           required
         />
       </label>
@@ -99,7 +136,6 @@ const CampaignForm = () => {
           name="budget" 
           id="budget" 
           onChange={handleChange}
-          // value={newDonation.amount}
           required
         />
       </label>
@@ -109,19 +145,56 @@ const CampaignForm = () => {
           name="cpc" 
           id="cpc" 
           onChange={handleChange}
-          // value={newDonation.amount}
           required
         />
       </label>
       <button className="introduction-button irrigateFormButton" onClick={() => createNFT()}>Generate NFT</button>
       {NFTdata.NFTaddress !== "" ?
       <div>
-        Your NFT address is : {NFTdata.NFTaddress}
+        <div className="formLabel">
+          Your NFT address is : {NFTdata.NFTaddress}
+        </div>
+        <label className="formLabel">Whitelist a website address:
+          <input 
+            type="text" 
+            name="websiteAddress" 
+            id="whitelistAddress" 
+            onChange={handleWebsiteAddress}
+            required
+          />
+        </label>
+        <button className="introduction-button irrigateFormButton" onClick={() => whitelist()}>Whitelist Address</button>
+        <label className="formLabel">Blacklist a website address:
+          <input 
+            type="text" 
+            name="websiteAddress" 
+            id="blacklistAddress" 
+            onChange={handleWebsiteAddress}
+            required
+          />
+        </label>
+        <button className="introduction-button irrigateFormButton" onClick={() => blacklist()}>Blacklist Address</button>
+        <label className="formLabel">Get website address status:
+          <input 
+            type="text" 
+            name="websiteAddress" 
+            id="websiteAddress" 
+            onChange={handleWebsiteAddress}
+            required
+          />
+        </label>
+        <button className="introduction-button irrigateFormButton" onClick={() => isWhitelisted()}>Get Address Status</button>
+        {websiteAddress !== "" ?
+          whitelisted !== null ?
+          <div>Address Status: {whitelisted.toString()}</div>
+          :
+          <></>  
+        :
+        <></>  
+        }
       </div>
       :
-      <div>
-
-      </div>
+      <></>
       }
     </div>
   )
