@@ -30,9 +30,21 @@ contract AdEthNFT {
   function whitelistAddress(address _newAddress) public onlyOwner {
     require(_newAddress != address(0), "Address 0");
     require(whitelist[_newAddress] == false, "Address already whitelisted");
+    
     whitelist[_newAddress] = true;
+    
     emit Whitelisted(_newAddress);
   }
+
   //function blacklistAddress()
+  function blacklistAddress(address _newAddress) public onlyOwner {
+    require(_newAddress != address(0), "Address 0");
+    require(whitelist[_newAddress] == true, "Address already blacklisted");
+    
+    whitelist[_newAddress] = false;
+    
+    emit Whitelisted(_newAddress);
+  }
+
   //function callerBalance()
 }
