@@ -6,7 +6,7 @@ import CampaignForm from  "./components/campaignForm";
 import "./App.css";
 
 class App extends Component {
-  state = { feeValue: 0, web3: null, accounts: null, contract: null };
+  state = { feeValue: 0, web3: null, accounts: null, contract: null, adCallerAddress: null, adCallerPrivateKey: null };
 
   componentDidMount = async () => {
     try {
@@ -18,8 +18,15 @@ class App extends Component {
         AdEthFactoryContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
+      const newAccount = web3.eth.accounts.create(web3.utils.randomHex(32));
 
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      this.setState({ 
+        web3, 
+        accounts, 
+        contract: instance, 
+        adCallerAddress: newAccount.address, 
+        adCallerPrivateKey: newAccount.privateKey
+      }, this.getCurrentFee);
     } catch (error) {
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,
@@ -28,7 +35,7 @@ class App extends Component {
     }
   };
 
-  runExample = async () => {
+  getCurrentFee = async () => {
     const { contract } = this.state;
     const currentFee = await contract.methods.fee().call();
     this.setState({ feeValue: currentFee });
@@ -51,7 +58,9 @@ class App extends Component {
             Transactions are made in DAI only.
           </p>
           <div>Current AdEth fee value is {this.state.feeValue} %</div>
-          <CampaignForm></CampaignForm>
+          <CampaignForm
+            params = {this.state}
+          ></CampaignForm>
         </div>
       </div>
     );

@@ -9,19 +9,17 @@ const adCallerAddress = config.web3.adCallerAddress;
 
 const NFTDisplayer = (props) => {
   useEffect(() => {
-    props.getUri()
+    props.getUri();
+    props.getAdCaller();
   })
 
   const nftClicked = async () => {
     console.log("clicked");
     const web3 = new Web3(window.ethereum);
     const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, adEthNFTAddress);
-    const uri = await AdEthNFTInstance.methods.uri().call();
-    console.log(uri)
-    console.log(adEthNFTAddress)
-    console.log(websiteAddress)
-    console.log(adCallerAddress)
-    AdEthNFTInstance.methods.beenClicked(websiteAddress).send({ from: adCallerAddress })
+    // const uri = await AdEthNFTInstance.methods.uri().call();
+    console.log(props)
+    AdEthNFTInstance.methods.beenClicked(websiteAddress).send({ from: props.adCaller })
     // AdEthNFTInstance.methods.beenClicked(websiteAddress)
     // .send({ from: adCallerAddress })
     // .on('receipt', (receipt) => {
