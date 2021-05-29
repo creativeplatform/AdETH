@@ -1,12 +1,17 @@
+const Dai = artifacts.require("Dai");
 const AdEthNFT = artifacts.require("AdEthNFT");
 
 contract("AdEthNFT", (accounts) => {
+  let chainId;
   let dai;
   let AdEthNFTInstance;
   let [adEthFactoryAddress, newOwner, website1, website2, caller, visitor] = accounts;
 
   before(async () => {
-    AdEthNFTInstance = await AdEthNFT.deployed(newOwner, caller, "uri", 10);
+    chainId = await web3.eth.getChainId();
+    dai = await Dai.deployed(chainId);
+    // AdEthNFTInstance = await AdEthNFT.deployed(newOwner, caller, "uri", 10);
+    AdEthNFTInstance = await AdEthNFT.deployed();
   });
 
   describe("get owner", async () => {
