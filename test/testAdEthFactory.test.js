@@ -37,6 +37,7 @@ contract("AdEthFactory", (accounts) => {
 
   describe("test createAdEthNFT function", async () => {
     it("can create an AdEthNFT contract and keep the fee percentage", async () => {
+      const uri = "https://bafyreie2meg7d5xgtsll2sllrhi4bnhdwcqtamwbebbih3vmgrnoxuuqnu.ipfs.dweb.link/metadata.json"
       const ethAmount = web3.utils.toWei("1", "ether");
       await AdEthFactoryInstance.sendTransaction({ from: adEthFactoryOwner, value: ethAmount})
       const budget = 5000;
@@ -47,7 +48,7 @@ contract("AdEthFactory", (accounts) => {
       
       await dai.approve(AdEthFactoryInstance.address, budget, { from: customer});
       
-      await AdEthFactoryInstance.createAdEthNFT(budget, adCaller, "uri", 10, { from: customer });
+      await AdEthFactoryInstance.createAdEthNFT(budget, adCaller, uri, 10, { from: customer });
 
       const newFactoryBalance = await dai.balanceOf(AdEthFactoryInstance.address);
       assert.equal(parseInt(newFactoryBalance), (parseInt(initialFactoryBalance) + (budget * factoryFee / 100)), "Factory erc20 balance should be the remaining fee percentage");

@@ -70,7 +70,11 @@ const CampaignForm = (props) => {
         const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, adEthFactoryAddress);
         // const daiBudget = campaign.budget * 10 ** 18;
         // const daiCpc = campaign.cpc * 10 ** 18;
-        AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, nftUri, campaign.cpc)
+        console.log("campaign.budget", campaign.budget)
+        console.log("props.params.adCallerAddress", props.params.adCallerAddress)
+        console.log("nftUri", nftUri)
+        console.log("campaign.cpc", campaign.cpc)
+        AdEthFactory.methods.createAdEthNFT(parseInt(campaign.budget), props.params.adCallerAddress, nftUri, parseInt(campaign.cpc))
         .send({ from: accounts[0] })
         .on('receipt', async (receipt) => {
           const data = receipt.events.FactoryProduction.returnValues;
