@@ -12,12 +12,13 @@ const CampaignForm = (props) => {
   const [campaign, setCampaign] = useState({
     name: "",
     description: "",
+    destination: "",
     file: "",
     budget: 0,
     cpc: 0
   })
   const [NFTdata, setNFTData ] = useState({
-    NFTaddress: "",
+    NFTaddress: "0x95a228696747c6e837d00a6963bacd1b0ad00fca",
     adCallerPrivateKey: ""
   })
   const [websiteAddress, setWebsiteAddress] = useState("")
@@ -74,7 +75,7 @@ const CampaignForm = (props) => {
         console.log("props.params.adCallerAddress", props.params.adCallerAddress)
         console.log("nftUri", nftUri)
         console.log("campaign.cpc", campaign.cpc)
-        AdEthFactory.methods.createAdEthNFT(parseInt(campaign.budget), props.params.adCallerAddress, nftUri, parseInt(campaign.cpc))
+        AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, nftUri, campaign.cpc)
         .send({ from: accounts[0] })
         .on('receipt', async (receipt) => {
           const data = receipt.events.FactoryProduction.returnValues;
@@ -148,6 +149,15 @@ const CampaignForm = (props) => {
           type="test" 
           name="description" 
           id="description" 
+          onChange={handleChange}
+          required
+        />
+      </label>
+      <label className="formLabel">Destination url after click:
+        <input 
+          type="test" 
+          name="destination" 
+          id="destination" 
           onChange={handleChange}
           required
         />
