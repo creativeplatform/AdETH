@@ -61,6 +61,7 @@ const CampaignForm = (props) => {
       await client.store({
         name: campaign.name,
         description: campaign.description,
+        destination: campaign.destination,
         budget: campaign.budget,
         cpc: campaign.cpc,
         image: new File([campaign.file], campaign.name + ".jpg", { type: 'image/jpg' })

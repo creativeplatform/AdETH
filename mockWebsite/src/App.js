@@ -21,7 +21,7 @@ function App() {
     .then(json => {
       const lastPart = json.name.length + 5;
       let cleanUrl = json.image.slice(4, -lastPart);
-      cleanUrl = cleanUrl + ".ipfs.dweb.link/" + json.name + ".jpg";
+      cleanUrl = "https" + cleanUrl + ".ipfs.dweb.link/" + json.name + ".jpg";
       console.log("cleanUrl", cleanUrl);
       setUri(cleanUrl);
     })
