@@ -22,7 +22,7 @@
 }
 
 .campaignFormContainer {
-  margin: auto;
+  margin: 5% auto;
   display: flex;
   flex-direction: column;
   width: 500px;

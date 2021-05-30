@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import config from './config/config';
 import AdEthFactoryContract from "./contracts/AdEthFactory.json";
 import getWeb3 from "./getWeb3";
 import CampaignForm from  "./components/campaignForm";
@@ -12,11 +13,15 @@ class App extends Component {
     try {
       const web3 = await getWeb3();
       const accounts = await web3.eth.getAccounts();
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = AdEthFactoryContract.networks[networkId];
+      // const networkId = await web3.eth.net.getId();
+      // const deployedNetwork = AdEthFactoryContract.networks[networkId];
+      // const instance = new web3.eth.Contract(
+      //   AdEthFactoryContract.abi,
+      //   deployedNetwork && deployedNetwork.address,
+      // );
       const instance = new web3.eth.Contract(
         AdEthFactoryContract.abi,
-        deployedNetwork && deployedNetwork.address,
+        config.web3.adEthFactoryAddress,
       );
       const newAccount = web3.eth.accounts.create(web3.utils.randomHex(32));
 

@@ -4,7 +4,7 @@ import erc20Contract from '../contracts/Dai.json';
 import AdEthFactoryContract from '../contracts/AdEthFactory.json';
 import AdEthNFTContract from '../contracts/AdEthNFT.json';
 import config from '../config/config';
-import { NFTStorage, File, Blob } from 'nft.storage';
+import { NFTStorage, File } from 'nft.storage';
 
 const client = new NFTStorage({ token: config.filecoin.nftStorage })
 
@@ -18,7 +18,7 @@ const CampaignForm = (props) => {
     cpc: 0
   })
   const [NFTdata, setNFTData ] = useState({
-    NFTaddress: "0x95a228696747c6e837d00a6963bacd1b0ad00fca",
+    NFTaddress: "",
     adCallerPrivateKey: ""
   })
   const [websiteAddress, setWebsiteAddress] = useState("")
@@ -57,25 +57,20 @@ const CampaignForm = (props) => {
     erc20Instance.methods.approve(adEthFactoryAddress, campaign.budget)
     .send({ from: accounts[0] })
     .on('receipt', async () => {
-      const metadata = await client.store({
+      // const metadata = await client.store({
+      await client.store({
         name: campaign.name,
         description: campaign.description,
         budget: campaign.budget,
         cpc: campaign.cpc,
         image: new File([campaign.file], campaign.name + ".jpg", { type: 'image/jpg' })
       })
-      const endUrl = ".ipfs.dweb.link";
-      const nftUri = `https://${metadata.ipnft}.ipfs.dweb.link/metadata.json`;
-      console.log(`https://${metadata.ipnft}.ipfs.dweb.link/metadata.json`)
-      if (metadata.url !== "") {
+      .then((res) => {
+        console.log(res)
+        const nftUri = "https://" + res.ipnft + ".ipfs.dweb.link/metadata.json";
         const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, adEthFactoryAddress);
-        // const daiBudget = campaign.budget * 10 ** 18;
-        // const daiCpc = campaign.cpc * 10 ** 18;
-        console.log("campaign.budget", campaign.budget)
-        console.log("props.params.adCallerAddress", props.params.adCallerAddress)
-        console.log("nftUri", nftUri)
-        console.log("campaign.cpc", campaign.cpc)
-        AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, nftUri, campaign.cpc)
+        const adCaller = props.params.adCallerAddress;
+        AdEthFactory.methods.createAdEthNFT(campaign.budget, adCaller, nftUri, campaign.cpc)
         .send({ from: accounts[0] })
         .on('receipt', async (receipt) => {
           const data = receipt.events.FactoryProduction.returnValues;
@@ -85,7 +80,30 @@ const CampaignForm = (props) => {
         .on('error', (err) => {
           console.log(err)
         })
-      }
+      })
+      // const endUrl = ".ipfs.dweb.link";
+      // const nftUri = `https://${metadata.ipnft}.ipfs.dweb.link/metadata.json`;
+      // console.log(`https://${metadata.ipnft}.ipfs.dweb.link/metadata.json`)
+      // if (metadata.url !== "") {
+        // const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, adEthFactoryAddress);
+        // const daiBudget = campaign.budget * 10 ** 18;
+        // const daiCpc = campaign.cpc * 10 ** 18;
+        // console.log("campaign.budget", campaign.budget)
+        // console.log("props.params.adCallerAddress", props.params.adCallerAddress)
+        // console.log("nftUri", nftUri)
+        // console.log("campaign.cpc", campaign.cpc)
+
+        // AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, nftUri, campaign.cpc)
+        // .send({ from: accounts[0] })
+        // .on('receipt', async (receipt) => {
+        //   const data = receipt.events.FactoryProduction.returnValues;
+        //   console.log(data)
+        //   setNFTData({NFTaddress: data.AdEthNFT})
+        // })
+        // .on('error', (err) => {
+        //   console.log(err)
+        // })
+      // }
     })  
     .on('error', (err) => {
       console.log(err)
