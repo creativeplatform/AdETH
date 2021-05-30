@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import AdEthFactoryContract from "./contracts/AdEthFactory.json";
 import getWeb3 from "./getWeb3";
 import CampaignForm from  "./components/campaignForm";
-
+import logo from "./logo/AdEth_logo.png";
 import "./App.css";
 
 class App extends Component {
@@ -48,7 +48,7 @@ class App extends Component {
     return (
       <div className="App">
         <div>
-          <h1>AdEth</h1>
+          <img src={logo} alt="adEth logo title"></img>
           <h2>Onboarding the advertising industrie into web3</h2>
           <p>
             Create an NFT with your add and provide a budget.

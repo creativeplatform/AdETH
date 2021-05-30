@@ -12,14 +12,22 @@ function App() {
   const [adCaller, setAdCaller] = useState("");
   
   const getUri = async () => {
-    // const web3 = new Web3(window.ethereum);
-    // const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, adEthNFTAddress);
-    // const response = await AdEthNFTInstance.methods.uri().call();
-    const response = fetch("ipfs://bafyreicb24plo3erwpoa5vokvtz5iimsolwypcmxanwty3hrvk7qzvroua/metadata.json");
-    console.log(response)
-    // const obj = JSON.parse(response);
-    // console.log(obj);
-    // setUri(obj.image);
+    const web3 = new Web3(window.ethereum);
+    const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, adEthNFTAddress);
+    const retrievedUri = await AdEthNFTInstance.methods.uri().call();
+    console.log("retrievedUri", retrievedUri);
+    fetch(retrievedUri)
+    .then(response => response.json())
+    .then(json => {
+      const lastPart = json.name.length + 5;
+      let cleanUrl = json.image.slice(4, -lastPart);
+      cleanUrl = cleanUrl + ".ipfs.dweb.link/" + json.name + ".jpg";
+      console.log("cleanUrl", cleanUrl);
+      setUri(cleanUrl);
+    })
+    // ipfs://bafybeicion5i2lindbbv7dbh3bluzl53vefwaxc23mft6qmasbjo7oq2fy/wwww.jpg
+    // ://bafybeicion5i2lindbbv7dbh3bluzl53vefwaxc23mft6qmasbjo7oq2fy
+    // https://bafybeigff6vzu56meekz7qog4blukwxygpv4wdmfq7ngsaf5xe4ztgu23m.ipfs.dweb.link/nike.jpg
   };
 
   const getAdCaller = async () => {

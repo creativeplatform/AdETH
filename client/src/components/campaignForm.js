@@ -4,7 +4,7 @@ import erc20Contract from '../contracts/Dai.json';
 import AdEthFactoryContract from '../contracts/AdEthFactory.json';
 import AdEthNFTContract from '../contracts/AdEthNFT.json';
 import config from '../config/config';
-import { NFTStorage, File } from 'nft.storage';
+import { NFTStorage, File, Blob } from 'nft.storage';
 
 const client = new NFTStorage({ token: config.filecoin.nftStorage })
 
@@ -33,6 +33,18 @@ const CampaignForm = (props) => {
     }));
   };
 
+  const handleFileChange = () => {
+    let filesSelected = (document.getElementById("file-uploaded")).files;
+    if (filesSelected != null) {
+      let fileSize = filesSelected[0].size;
+      if (filesSelected.length > 0 && fileSize <= 50000) {
+        setCampaign({...campaign, file: filesSelected[0]})
+      } else {
+        alert('File size too big, image must be less than 50kb');
+      };
+    };
+  };
+
   const createNFT = async () => {
     console.log("create NFT");
     console.log(campaign)
@@ -51,13 +63,14 @@ const CampaignForm = (props) => {
         cpc: campaign.cpc,
         image: new File([campaign.file], campaign.name + ".jpg", { type: 'image/jpg' })
       })
-      console.log(metadata.url)
+      const endUrl = ".ipfs.dweb.link";
+      const nftUri = `https://${metadata.ipnft}.ipfs.dweb.link/metadata.json`;
+      console.log(`https://${metadata.ipnft}.ipfs.dweb.link/metadata.json`)
       if (metadata.url !== "") {
         const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, adEthFactoryAddress);
         // const daiBudget = campaign.budget * 10 ** 18;
         // const daiCpc = campaign.cpc * 10 ** 18;
-        // AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, metadata.url, campaign.cpc)
-        AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, "url", campaign.cpc)
+        AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, nftUri, campaign.cpc)
         .send({ from: accounts[0] })
         .on('receipt', async (receipt) => {
           const data = receipt.events.FactoryProduction.returnValues;
@@ -139,8 +152,8 @@ const CampaignForm = (props) => {
         <input 
           type="file" 
           name="file" 
-          id="file" 
-          onChange={handleChange}
+          id="file-uploaded" 
+          onChange={handleFileChange}
           required
         />
       </label>
