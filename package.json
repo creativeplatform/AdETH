@@ -1,0 +1,26 @@
+{
+  "name": "adeth",
+  "version": "1.0.0",
+  "description": "POC for Web3Weekend Hackathon",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raphaelpg/AdETH.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raphaelpg/AdETH/issues"
+  },
+  "homepage": "https://github.com/raphaelpg/AdETH#readme"
+}

@@ -2,7 +2,7 @@ const WEB3 = {
 	erc20Name: "dai",
 	erc20Address: "0x05C64669dD8fb5d0264DDa8C5125eA339dAED657",
 	adEthFactoryAddress: "0x512dC37A152C63122c730E5671671B64fF260F0d",
-  adEthNFTAddress: "0x355c48b65Bca9bfc8f3f13F2d512E1678d19470C",
+  adEthNFTAddress: "0xa1387527ac72C4A6a060b6a21e0efdF965AF95AE",
   adCallerAddress: "0xdc2cf8Ae404b722312ff47D4B684fd8A7dC835EB",
 	websiteAddress: "0x7F4AE0e9B7275C41B8B4160B746AA934c58bCFe0",
 	// networkId: 137 //Matic

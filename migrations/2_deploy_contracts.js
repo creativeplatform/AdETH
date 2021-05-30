@@ -3,7 +3,7 @@ const AdEthFactory = artifacts.require("./AdEthFactory.sol");
 const AdEthNFT = artifacts.require("./AdEthNFT.sol");
 
 module.exports = (deployer, network, accounts) => {
-  deployer.deploy(Dai, 1337)
+  deployer.deploy(Dai, 80001)
   .then(() => {
     deployer.deploy(AdEthFactory, Dai.address, 5)
   })
