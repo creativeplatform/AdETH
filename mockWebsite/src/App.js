@@ -8,7 +8,8 @@ import config from './config/config';
 const adEthNFTAddress = config.web3.adEthNFTAddress;
 
 function App() {
-  const [uri, setUri] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [adDestination, setAdDestination] = useState("");
   const [adCaller, setAdCaller] = useState("");
   
   const getUri = async () => {
@@ -23,7 +24,8 @@ function App() {
       let cleanUrl = json.image.slice(4, -lastPart);
       cleanUrl = "https" + cleanUrl + ".ipfs.dweb.link/" + json.name + ".jpg";
       console.log("cleanUrl", cleanUrl);
-      setUri(cleanUrl);
+      setImageUrl(cleanUrl);
+      setAdDestination(json.destination);
     })
     // ipfs://bafybeicion5i2lindbbv7dbh3bluzl53vefwaxc23mft6qmasbjo7oq2fy/wwww.jpg
     // ://bafybeicion5i2lindbbv7dbh3bluzl53vefwaxc23mft6qmasbjo7oq2fy
@@ -48,7 +50,8 @@ function App() {
           <p>Sed in rebus apertissimis nimium longi sumus. Hic quoque suus est de summoque bono dissentiens dici vere Peripateticus non potest. Restincta enim sitis stabilitatem voluptatis habet, inquit, illa autem voluptas ipsius restinctionis in motu est. Ut nemo dubitet, eorum omnia officia quo spectare, quid sequi, quid fugere debeant? Multoque hoc melius nos veriusque quam Stoici. Qui non moveatur et offensione turpitudinis et comprobatione honestatis? Levatio igitur vitiorum magna fit in iis, qui habent ad virtutem progressionis aliquantum. Atqui, inquit, si Stoicis concedis ut virtus sola, si adsit vitam efficiat beatam, concedis etiam Peripateticis. </p>
         </div>
         <NFTDisplayer 
-          uri={ uri } 
+          imageUrl={ imageUrl }
+          adDestination= { adDestination }
           getUri={ getUri }
           adCaller={ adCaller }
           getAdCaller={ getAdCaller }  

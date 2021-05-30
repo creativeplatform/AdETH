@@ -17,20 +17,17 @@ const NFTDisplayer = (props) => {
     console.log("clicked");
     const provider = new Provider(config.web3.adCallerPrivateKey, window.ethereum)
     const web3 = new Web3(provider);
-    // const networkId = await web3.eth.net.getId();
     const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, adEthNFTAddress);
 
     console.log(props);
     const receipt = await AdEthNFTInstance.methods.beenClicked(websiteAddress).send({ from: props.adCaller, nonce: 0 })
     console.log(`Transaction hash: ${receipt.transactionHash}`);
-    // rawTransaction.data = AdEthNFTInstance.methods.beenClicked(websiteAddress).encodeABI();
   };
 
   return (
     <div className="NFTDisplayerContainer">
-      {/* <a onClick={() => nftClicked()} href="https://sailing-with-greenpeace.com/" target="_blank" rel="noopener noreferrer"> */}
-      <a onClick={() => nftClicked()} >
-        <img src={props.uri} alt="display nft file" />
+      <a onClick={() => nftClicked()} href={props.adDestination} target="_blank" rel="noopener noreferrer">
+        <img src={props.imageUrl} alt="display nft file" />
       </a>
     </div>
   )
