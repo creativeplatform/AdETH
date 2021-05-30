@@ -12,10 +12,14 @@ function App() {
   const [adCaller, setAdCaller] = useState("");
   
   const getUri = async () => {
-    const web3 = new Web3(window.ethereum);
-    const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, adEthNFTAddress);
-    const response = await AdEthNFTInstance.methods.uri().call();
-    setUri(response);
+    // const web3 = new Web3(window.ethereum);
+    // const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, adEthNFTAddress);
+    // const response = await AdEthNFTInstance.methods.uri().call();
+    const response = fetch("ipfs://bafyreicb24plo3erwpoa5vokvtz5iimsolwypcmxanwty3hrvk7qzvroua/metadata.json");
+    console.log(response)
+    // const obj = JSON.parse(response);
+    // console.log(obj);
+    // setUri(obj.image);
   };
 
   const getAdCaller = async () => {

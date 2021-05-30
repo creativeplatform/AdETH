@@ -4,6 +4,9 @@ import erc20Contract from '../contracts/Dai.json';
 import AdEthFactoryContract from '../contracts/AdEthFactory.json';
 import AdEthNFTContract from '../contracts/AdEthNFT.json';
 import config from '../config/config';
+import { NFTStorage, File } from 'nft.storage';
+
+const client = new NFTStorage({ token: config.filecoin.nftStorage })
 
 const CampaignForm = (props) => {
   const [campaign, setCampaign] = useState({
@@ -37,24 +40,34 @@ const CampaignForm = (props) => {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const web3 = new Web3(window.ethereum);
     
-    // const newAccount = web3.eth.accounts.create(web3.utils.randomHex(32));
-    // console.log(newAccount.address, newAccount.privateKey)
-
     const erc20Instance = new web3.eth.Contract(erc20Contract.abi, erc20Address);
     erc20Instance.methods.approve(adEthFactoryAddress, campaign.budget)
     .send({ from: accounts[0] })
     .on('receipt', async () => {
-      const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, adEthFactoryAddress);
-      AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, campaign.file, campaign.cpc)
-      .send({ from: accounts[0] })
-      .on('receipt', async (receipt) => {
-        const data = receipt.events.FactoryProduction.returnValues;
-        console.log(data)
-        setNFTData({NFTaddress: data.AdEthNFT})
+      const metadata = await client.store({
+        name: campaign.name,
+        description: campaign.description,
+        budget: campaign.budget,
+        cpc: campaign.cpc,
+        image: new File([campaign.file], campaign.name + ".jpg", { type: 'image/jpg' })
       })
-      .on('error', (err) => {
-        console.log(err)
-      })
+      console.log(metadata.url)
+      if (metadata.url !== "") {
+        const AdEthFactory = new web3.eth.Contract(AdEthFactoryContract.abi, adEthFactoryAddress);
+        // const daiBudget = campaign.budget * 10 ** 18;
+        // const daiCpc = campaign.cpc * 10 ** 18;
+        // AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, metadata.url, campaign.cpc)
+        AdEthFactory.methods.createAdEthNFT(campaign.budget, props.params.adCallerAddress, "url", campaign.cpc)
+        .send({ from: accounts[0] })
+        .on('receipt', async (receipt) => {
+          const data = receipt.events.FactoryProduction.returnValues;
+          console.log(data)
+          setNFTData({NFTaddress: data.AdEthNFT})
+        })
+        .on('error', (err) => {
+          console.log(err)
+        })
+      }
     })  
     .on('error', (err) => {
       console.log(err)
@@ -124,7 +137,7 @@ const CampaignForm = (props) => {
       </label>
       <label className="formLabel">File:
         <input 
-          type="text" 
+          type="file" 
           name="file" 
           id="file" 
           onChange={handleChange}
