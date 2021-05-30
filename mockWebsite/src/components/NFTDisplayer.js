@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import Web3 from 'web3';
+import Provider from '@truffle/hdwallet-provider';
 import AdEthNFTContract from '../contracts/AdEthNFT.json';
 import config from '../config/config';
 
 const adEthNFTAddress = config.web3.adEthNFTAddress;
 const websiteAddress = config.web3.websiteAddress;
-const adCallerAddress = config.web3.adCallerAddress;
 
 const NFTDisplayer = (props) => {
   useEffect(() => {
@@ -15,20 +15,15 @@ const NFTDisplayer = (props) => {
 
   const nftClicked = async () => {
     console.log("clicked");
-    const web3 = new Web3(window.ethereum);
+    const provider = new Provider(config.web3.adCallerPrivateKey, window.ethereum)
+    const web3 = new Web3(provider);
+    // const networkId = await web3.eth.net.getId();
     const AdEthNFTInstance = new web3.eth.Contract(AdEthNFTContract.abi, adEthNFTAddress);
-    // const uri = await AdEthNFTInstance.methods.uri().call();
-    console.log(props)
-    AdEthNFTInstance.methods.beenClicked(websiteAddress).send({ from: props.adCaller })
-    // AdEthNFTInstance.methods.beenClicked(websiteAddress)
-    // .send({ from: adCallerAddress })
-    // .on('receipt', (receipt) => {
-    //   const data = receipt.events.Clicked.returnValues;
-    //   console.log(data)
-    // })  
-    // .on('error', (err) => {
-    //   console.log(err)
-    // })
+
+    console.log(props);
+    const receipt = await AdEthNFTInstance.methods.beenClicked(websiteAddress).send({ from: props.adCaller, nonce: 0 })
+    console.log(`Transaction hash: ${receipt.transactionHash}`);
+    // rawTransaction.data = AdEthNFTInstance.methods.beenClicked(websiteAddress).encodeABI();
   };
 
   return (
